@@ -5,21 +5,21 @@ pool:
 
 resources:
   repositories:
-    - repository: ProjectRepository
-      type: git
-      name: D-Force
-      trigger: none
-    - repository: GitOpsRepository
-      type: git
-      name: D-Force.Deployment
-      trigger: none
+  - repository: ProjectRepository
+    type: git
+    name: GitOps.DemoProject
+    trigger: none
+  - repository: GitOpsRepository
+    type: git
+    name: GitOps.Deployment
+    trigger: none
   pipelines:
-    - pipeline: build
-      source: DForce WebApi CI
-      trigger: true
+  - pipeline: build
+    source: GitOps.DemoProject WebApi CI
+    trigger: true
 
 extends:
   template: template.yaml
   parameters:
     projectName: webapi
-    chartPath: charts/dforce
+    chartPath: demo-project

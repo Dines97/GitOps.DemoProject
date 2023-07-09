@@ -22,4 +22,4 @@ extends:
   template: template.yaml
   parameters:
     projectName: web
-    chartPath: charts/dforce
+    chartPath: demo-project

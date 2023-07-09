@@ -1,43 +1,44 @@
 parameters:
-  - name: projectName
-    type: string
-  - name: chartPath
-    type: string
-  - name: env
-    type: string
+- name: projectName
+  type: string
+- name: chartPath
+  type: string
+- name: env
+  type: string
 
 stages:
-  - stage: ${{ parameters.env }}
-    jobs:
-      - deployment:
+- stage: ${{ parameters.env }}
+  jobs:
+  - deployment:
+    environment: ${{ parameters.env }}
+    
+    variables:
+    - name: valuesImagesFileName
+      value: values.${{ parameters.env }}.yaml
+    
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: GitOpsRepository
+            persistCredentials: true
+            clean: true
 
-        variables:
-          - name: valuesImagesFileName
-            value: values.${{ parameters.env }}.yaml
-        
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: GitOpsRepository
-                  persistCredentials: true
-                  clean: true
+          - script: |
+              git fetch --all
+              git checkout master
+              git reset --hard origin/master
+            displayName: Clean checkout
+            workingDirectory: ${{ parameters.chartPath }}
 
-                - script: |
-                    git fetch --all
-                    git checkout master
-                    git reset --hard origin/master
-                  displayName: Clean checkout
-                  workingDirectory: ${{ parameters.chartPath }}
+          - script: |
+              docker run --user="root" --rm -v "${PWD}":/workdir mikefarah/yq eval --inplace '.${{ parameters.projectName }}.tag = "$(resources.pipeline.build.runName)"' $(valuesImagesFileName)
+            displayName: Change tag in yaml
+            workingDirectory: ${{ parameters.chartPath }}
 
-                - script: |
-                    docker run --user="root" --rm -v "${PWD}":/workdir mikefarah/yq eval --inplace '.${{ parameters.projectName }}.tag = "$(resources.pipeline.build.runName)"' $(valuesImagesFileName)
-                  displayName: Change tag in yaml
-                  workingDirectory: ${{ parameters.chartPath }}
-
-                - script: |
-                    git add $(valuesImagesFileName)
-                    git commit -m "[CD] Project ${{ parameters.projectName }} promoted by $(Build.RequestedFor) to ${{ parameters.env }} environment"
-                    git push origin master
-                  displayName: Commit and push back
-                  workingDirectory: ${{ parameters.chartPath }}
+          - script: |
+              git add $(valuesImagesFileName)
+              git commit -m "[CD] Project ${{ parameters.projectName }} promoted by $(Build.RequestedFor) to ${{ parameters.env }} environment"
+              git push origin master
+            displayName: Commit and push back
+            workingDirectory: ${{ parameters.chartPath }}
