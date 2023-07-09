@@ -1,0 +1,25 @@
+﻿name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:_r)
+
+pool:
+  name: "LinuxPool"
+
+resources:
+  repositories:
+    - repository: ProjectRepository
+      type: git
+      name: D-Force
+      trigger: none
+    - repository: GitOpsRepository
+      type: git
+      name: D-Force.Deployment
+      trigger: none
+  pipelines:
+    - pipeline: build
+      source: DForce WebApi CI
+      trigger: true
+
+extends:
+  template: template.yaml
+  parameters:
+    projectName: webapi
+    chartPath: charts/dforce

@@ -1,0 +1,17 @@
+﻿parameters:
+  - name: projectName
+    type: string
+  - name: chartPath
+    type: string
+
+stages:
+  - template: stage.yaml
+    parameters:
+      projectName: ${{ parameters.projectName }}
+      chartPath: ${{ parameters.chartPath }}
+      env: test
+  - template: stage.yaml
+    parameters:
+      projectName: ${{ parameters.projectName }}
+      chartPath: ${{ parameters.chartPath }}
+      env: prod

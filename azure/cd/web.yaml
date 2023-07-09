@@ -1,0 +1,25 @@
+﻿name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:_r)
+
+pool:
+  name: "LinuxPool"
+
+resources:
+  repositories:
+  - repository: ProjectRepository
+    type: git
+    name: GitOps.DemoProject
+    trigger: none
+  - repository: GitOpsRepository
+    type: git
+    name: GitOps.Deployment
+    trigger: none
+  pipelines:
+  - pipeline: build
+    source: GitOps.DemoProject Web CI
+    trigger: true
+
+extends:
+  template: template.yaml
+  parameters:
+    projectName: web
+    chartPath: charts/dforce
