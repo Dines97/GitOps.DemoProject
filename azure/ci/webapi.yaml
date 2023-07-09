@@ -1,0 +1,23 @@
+name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:_r)
+
+pool:
+  name: "LinuxPool"
+
+resources:
+  repositories:
+  - repository: ProjectRepository
+    type: git
+    name: GitOps.DemoProject
+    trigger:
+      branches:
+        include:
+        - master
+      paths:
+        include:
+        - WebApi/
+
+extends:
+  template: template.yaml
+  parameters:
+    projectName: webapi
+    dockerFilePath: WebApi/Dockerfile

@@ -1,0 +1,36 @@
+parameters:
+- name: contextPath
+  type: string
+  default: '/'
+- name: projectName
+  type: string
+- name: dockerfilePath
+  type: string
+
+variables:
+- name: containerRegistry
+  value: "Google Reg"
+- name: repository
+  value: dt-anthos-onpremise/git-opsdemo-project-${{ parameters.projectName }}
+
+steps:
+- checkout: ProjectRepository
+  clean: true
+
+- task: Docker@2
+  displayName: Login
+  inputs:
+    command: login
+    containerRegistry: $(containerRegistry)
+
+- task: Docker@2
+  displayName: Build and Push an image
+  inputs:
+    containerRegistry: $(containerRegistry)
+    repository: $(repository)
+    command: buildAndPush
+    Dockerfile: ${{ parameters.dockerfilePath }}
+    buildContext: ${{ parameters.contextPath }}
+    tags: |
+      $(Build.BuildNumber)
+      latest
