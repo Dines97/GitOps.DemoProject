@@ -1,7 +1,7 @@
 parameters:
 - name: contextPath
   type: string
-  default: '/'
+  default: './'
 - name: projectName
   type: string
 - name: dockerfilePath
@@ -11,7 +11,7 @@ variables:
 - name: containerRegistry
   value: "Google Reg"
 - name: repository
-  value: dt-anthos-onpremise/git-opsdemo-project-${{ parameters.projectName }}
+  value: dt-anthos-onpremise/demo-project-${{ parameters.projectName }}
 
 steps:
 - checkout: ProjectRepository
