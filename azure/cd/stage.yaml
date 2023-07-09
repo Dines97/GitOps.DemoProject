@@ -32,7 +32,7 @@ stages:
             workingDirectory: ${{ parameters.chartPath }}
 
           - script: |
-              docker run --user="root" --rm -v "${PWD}":/workdir mikefarah/yq eval --inplace '.${{ parameters.projectName }}.tag = "$(resources.pipeline.build.runName)"' $(valuesImagesFileName)
+              docker run --user="root" --rm -v "${PWD}":/workdir mikefarah/yq eval --inplace '.${{ parameters.projectName }}.image.tag = "$(resources.pipeline.build.runName)"' $(valuesImagesFileName)
             displayName: Change tag in yaml
             workingDirectory: ${{ parameters.chartPath }}
 
